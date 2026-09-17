@@ -183,7 +183,7 @@ if "Tổng quan" in menu_choice:
     total_leads = len(df_leads)
     cold_leads = len(df_leads[df_leads['Phân loại'] == '❄️ COLD']) if total_leads > 0 else 0
     business_leads = len(df_leads[df_leads['Phân loại'] == '🤝 BUSINESS']) if total_leads > 0 else 0
-    prority_leads = len(df_leads[df_leads['Phân loại'] == '⚡ PRIORITYPRIORITY']) if total_leads > 0 else 0
+    priority_leads = len(df_leads[df_leads['Phân loại'] == '⚡ PRIORITYPRIORITY']) if total_leads > 0 else 0
     
     # 1. Tổng quan khách hàng
     st.markdown('<div class="section-header">📊 Tổng quan khách hàng</div>', unsafe_allow_html=True)
@@ -193,9 +193,9 @@ if "Tổng quan" in menu_choice:
     with c2:
         st.markdown(f'<div class="metric-card"><div class="metric-title">❄️ Khách COLD</div><div class="metric-value">{cold_leads}</div></div>', unsafe_allow_html=True)
     with c3:
-        st.markdown(f'<div class="metric-card"><div class="metric-title">🤝 Khách BUSINESS</div><div class="metric-value">{warm_leads}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-card"><div class="metric-title">🤝 Khách BUSINESS</div><div class="metric-value">{business_leads}</div></div>', unsafe_allow_html=True)
     with c4:
-        st.markdown(f'<div class="metric-card"><div class="metric-title">⚡ Khách PRIORITY</div><div class="metric-value">{hot_leads}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-card"><div class="metric-title">⚡ Khách PRIORITY</div><div class="metric-value">{priority_leads}</div></div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
