@@ -191,11 +191,11 @@ if "Tổng quan" in menu_choice:
     with c1:
         st.markdown(f'<div class="metric-card"><div class="metric-title">👥 Tổng khách hàng</div><div class="metric-value">{total_leads}</div></div>', unsafe_allow_html=True)
     with c2:
-        st.markdown(f'<div class="metric-card"><div class="metric-title">❄️ Khách COLD</div><div class="metric-value">{hot_leads}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-card"><div class="metric-title">❄️ Khách COLD</div><div class="metric-value">{cold_leads}</div></div>', unsafe_allow_html=True)
     with c3:
         st.markdown(f'<div class="metric-card"><div class="metric-title">🤝 Khách BUSINESS</div><div class="metric-value">{warm_leads}</div></div>', unsafe_allow_html=True)
     with c4:
-        st.markdown(f'<div class="metric-card"><div class="metric-title">⚡ Khách PRIORITY</div><div class="metric-value">{cold_leads}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-card"><div class="metric-title">⚡ Khách PRIORITY</div><div class="metric-value">{hot_leads}</div></div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
