@@ -161,7 +161,7 @@ with st.sidebar:
 def render_header_banner():
     st.markdown("""
         <div class="header-banner">
-            <h2>🏛️ VIETCOMBANK LEAD MANAGER - NHÓM LỘN XỘN</h2>
+            <h2>🏛️ VIETCOMBANK LEAD MANAGER - NHÓM NoLe KPI</h2>
             <p>Hệ thống quản lý và chăm sóc khách hàng tiềm năng Ngân hàng Vietcombank</p>
         </div>
     """, unsafe_allow_html=True)
