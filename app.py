@@ -1,296 +1,286 @@
 import streamlit as st
 import pandas as pd
-from io import BytesIO
 
-
-# ==========================================
-# CẤU HÌNH
-# ==========================================
-
+# 1. Cấu hình trang
 st.set_page_config(
-    page_title="Quản lý khách hàng",
-    page_icon="👤",
-    layout="wide"
+    page_title="VIETCOMBANK LEAD MANAGER - NHÓM LỘN XỘN",
+    page_icon="🏛️",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
-st.image("VCB.jpg")
+
+# 2. CSS Tùy chỉnh (Tông màu Trắng & Xanh Lá đặc trưng của Vietcombank)
+st.markdown("""
+    <style>
+    /* Nền ứng dụng màu trắng sáng */
+    .stApp {
+        background-color: #F8F9FA;
+    }
+    
+    /* Thanh Sidebar bên trái - Màu xanh Vietcombank */
+    [data-testid="stSidebar"] {
+        background-color: #004d25 !important;
+    }
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    
+    /* Khung Logo màu trắng trong Sidebar */
+    .logo-container {
+        background-color: white;
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    /* Header Banner chính */
+    .header-banner {
+        background: linear-gradient(135deg, #006838 0%, #004d25 100%);
+        border-radius: 12px;
+        padding: 25px 30px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 104, 56, 0.15);
+    }
+    .header-banner h2 {
+        color: white !important;
+        margin: 0 0 8px 0;
+        font-weight: 700;
+        font-size: 24px;
+    }
+    .header-banner p {
+        color: #E8F5E9 !important;
+        margin: 0;
+        font-size: 14px;
+    }
+    
+    /* Tiêu đề các mục */
+    .section-header {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1A1A1A;
+        margin-top: 20px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Thẻ thống kê tổng quan (Cards) */
+    .metric-card {
+        background-color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .metric-title {
+        font-size: 13px;
+        color: #64748B;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    .metric-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #006838;
+    }
+    
+    /* Thẻ Pipeline tiến độ */
+    .pipeline-card {
+        background-color: white;
+        border: 1px solid #E0E0E0;
+        border-radius: 12px;
+        padding: 20px 10px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: transform 0.2s;
+    }
+    .pipeline-card:hover {
+        border-color: #006838;
+        transform: translateY(-2px);
+    }
+    .pipeline-title {
+        font-size: 14px;
+        color: #555555;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+    .pipeline-count {
+        font-size: 32px;
+        font-weight: bold;
+        color: #006838;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # ==========================================
-# KHỞI TẠO DANH SÁCH KHÁCH HÀNG
+# 3. THANH DIỀU HƯỚNG BÊN TRÁI (SIDEBAR)
 # ==========================================
-
-if "customers" not in st.session_state:
-    st.session_state.customers = []
-
-
-# ==========================================
-# HÀM XUẤT EXCEL
-# ==========================================
-
-def export_excel():
-
-    df = pd.DataFrame(
-        st.session_state.customers
+with st.sidebar:
+    # Ô logo Vietcombank nền trắng
+    st.markdown("""
+        <div class="logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Vietcombank_logo.svg/1200px-Vietcombank_logo.svg.png" width="160">
+        </div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h3 style="margin: 0; font-size: 18px; font-weight: bold; color: white;">VIETCOMBANK</h3>
+            <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8; font-weight: 600;">LEAD MANAGER</p>
+            <p style="margin: 0; font-size: 11px; opacity: 0.7;">Nhóm Lộn Xộn</p>
+        </div>
+        <hr style="border-color: rgba(255,255,255,0.2); margin-bottom: 20px;">
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<p style='font-size: 12px; font-weight: bold; letter-spacing: 1px; color: #A0AEC0;'>MENU CHỨC NĂNG</p>", unsafe_allow_html=True)
+    
+    # Danh sách chức năng đầy đủ từ hình ảnh
+    menu_choice = st.radio(
+        "Chức năng",
+        options=[
+            "🏠 Tổng quan",
+            "👥 Khách hàng",
+            "➕ Thêm khách hàng",
+            "🎯 Pipeline",
+            "📊 Phân tích",
+            "📞 Cần chăm sóc"
+        ],
+        label_visibility="collapsed"
     )
 
-    output = BytesIO()
-
-    with pd.ExcelWriter(
-        output,
-        engine="openpyxl"
-    ) as writer:
-
-        df.to_excel(
-            writer,
-            index=False,
-            sheet_name="Khách hàng"
-        )
-
-    return output.getvalue()
-
-
 # ==========================================
-# MENU
+# 4. NỘI DUNG CHÍNH (MAIN CONTENT AREA)
 # ==========================================
 
-st.sidebar.title("📋 MENU")
+if "Tổng quan" in menu_choice:
+    # 4.1 Header Banner chính
+    st.markdown("""
+        <div class="header-banner">
+            <h2>🏛️ VIETCOMBANK LEAD MANAGER - NHÓM LỘN XỘN</h2>
+            <p>Hệ thống quản lý và chăm sóc khách hàng tiềm năng Ngân hàng Vietcombank</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 4.2 Tổng quan khách hàng
+    st.markdown('<div class="section-header">📊 Tổng quan khách hàng</div>', unsafe_allow_html=True)
+    
+    col_k1, col_k2, col_k3, col_k4 = st.columns(4)
+    
+    with col_k1:
+        st.markdown("""
+            <div class="metric-card">
+                <div class="metric-title">👥 Tổng khách hàng</div>
+                <div class="metric-value">0</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with col_k2:
+        st.markdown("""
+            <div class="metric-card">
+                <div class="metric-title">🔥 Khách HOT</div>
+                <div class="metric-value">0</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with col_k3:
+        st.markdown("""
+            <div class="metric-card">
+                <div class="metric-title">⚡ Khách WARM</div>
+                <div class="metric-value">0</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with col_k4:
+        st.markdown("""
+            <div class="metric-card">
+                <div class="metric-title">❄️ Khách COLD</div>
+                <div class="metric-value">0</div>
+            </div>
+        """, unsafe_allow_html=True)
 
-page = st.sidebar.radio(
-    "Chọn trang",
-    [
-        "👤 Nhập khách hàng",
-        "🔐 Admin"
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 4.3 Pipeline tiến độ
+    st.markdown('<div class="section-header">📌 Pipeline tiến độ</div>', unsafe_allow_html=True)
+    
+    p1, p2, p3, p4, p5 = st.columns(5)
+    
+    stages = [
+        ("Mới tiếp nhận", "0", p1),
+        ("Đã liên hệ", "0", p2),
+        ("Đang tư vấn", "0", p3),
+        ("Tiềm năng", "0", p4),
+        ("Đã chuyển đổi", "0", p5)
     ]
-)
+    
+    for title, count, col in stages:
+        with col:
+            st.markdown(f"""
+                <div class="pipeline-card">
+                    <div class="pipeline-title">{title}</div>
+                    <div class="pipeline-count">{count}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
 
-# ==========================================
-# TRANG NHẬP KHÁCH HÀNG
-# ==========================================
-
-if page == "👤 Nhập khách hàng":
-
-    st.title("👤 THÔNG TIN KHÁCH HÀNG")
-
-    st.write(
-        "Vui lòng nhập thông tin khách hàng."
+    # 4.4 Khách hàng ưu tiên xử lý (HOT Lead)
+    st.markdown('<div class="section-header">🔥 Khách hàng ưu tiên xử lý (HOT Lead)</div>', unsafe_allow_html=True)
+    
+    # Bảng hiển thị danh sách HOT Lead
+    df_empty = pd.DataFrame({
+        "Mã KH": [],
+        "Họ và tên": [],
+        "Số điện thoại": [],
+        "Nhu cầu sản phẩm": [],
+        "Mức độ ưu tiên": [],
+        "Trạng thái": [],
+        "Ngày tiếp nhận": []
+    })
+    
+    st.dataframe(
+        df_empty,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Mã KH": "Mã KH",
+            "Họ và tên": "Họ và tên",
+            "Số điện thoại": "Số điện thoại",
+            "Nhu cầu sản phẩm": "Nhu cầu sản phẩm",
+            "Mức độ ưu tiên": "Mức độ ưu tiên",
+            "Trạng thái": "Trạng thái",
+            "Ngày tiếp nhận": "Ngày tiếp nhận"
+        }
     )
-
-    st.divider()
-
-
-    # --------------------------------------
-    # NHẬP THÔNG TIN
-    # --------------------------------------
-
-    phone = st.text_input(
-        "📱 Số điện thoại",
-        placeholder="Nhập số điện thoại"
-    )
-
-    name = st.text_input(
-        "👤 Tên khách hàng",
-        placeholder="Nhập tên khách hàng"
-    )
-
-    address = st.text_input(
-        "📍 Địa chỉ",
-        placeholder="Nhập địa chỉ"
-    )
-
-    note = st.text_area(
-        "📝 Ghi chú",
-        placeholder="Nhập ghi chú"
-    )
-
-
-    st.divider()
-
-
-    # --------------------------------------
-    # NÚT LƯU
-    # --------------------------------------
-
-    if st.button(
-        "💾 LƯU THÔNG TIN",
-        type="primary",
-        use_container_width=True
-    ):
-
-        if phone.strip() == "":
-
-            st.error(
-                "❌ Vui lòng nhập số điện thoại."
-            )
-
-        elif name.strip() == "":
-
-            st.error(
-                "❌ Vui lòng nhập tên khách hàng."
-            )
-
-        else:
-
-            # Tạo khách hàng mới
-
-            customer = {
-                "Số điện thoại": phone.strip(),
-                "Tên khách hàng": name.strip(),
-                "Địa chỉ": address.strip(),
-                "Ghi chú": note.strip()
-            }
-
-
-            # Lưu vào session
-
-            st.session_state.customers.append(
-                customer
-            )
-
-
-            st.success(
-                "✅ Đã lưu thông tin khách hàng!"
-)
-
-
-# ==========================================
-# TRANG ADMIN
-# ==========================================
-
-elif page == "🔐 Admin":
-
-    st.title("🔐 ADMIN")
-
-    st.divider()
-
-
-    # ======================================
-    # ĐĂNG NHẬP
-    # ======================================
-
-    if "admin_logged_in" not in st.session_state:
-
-        st.session_state.admin_logged_in = False
-
-
-    if not st.session_state.admin_logged_in:
-
-        password = st.text_input(
-            "🔑 Mật khẩu",
-            type="password"
-        )
-
-
-        if st.button(
-            "ĐĂNG NHẬP",
-            type="primary"
-        ):
-
-            if password == "123456":
-
-                st.session_state.admin_logged_in = True
-
-                st.rerun()
-
-            else:
-
-                st.error(
-                    "❌ Sai mật khẩu."
-                )
-
-
-    # ======================================
-    # ADMIN ĐÃ ĐĂNG NHẬP
-    # ======================================
-
-    else:
-
-        col1, col2 = st.columns(
-            [5, 1]
-        )
-
-
-        with col1:
-
-            st.subheader(
-                "📊 DANH SÁCH KHÁCH HÀNG"
-            )
-
-
-        with col2:
-
-            if st.button("🚪 Đăng xuất"):
-
-                st.session_state.admin_logged_in = False
-
-                st.rerun()
-
-
-        st.divider()
-
-
-        # ==================================
-        # KIỂM TRA DỮ LIỆU
-        # ==================================
-
-        if len(st.session_state.customers) == 0:
-
-            st.info(
-                "📭 Chưa có khách hàng."
-            )
-
-
-        else:
-
-            # ==============================
-            # CHUYỂN SANG DATAFRAME
-            # ==============================
-
-            df = pd.DataFrame(
-                st.session_state.customers
-            )
-
-
-            # ==============================
-            # TỔNG KHÁCH HÀNG
-            # ==============================
-
-            st.metric(
-                "👥 Tổng số khách hàng",
-                len(df)
-            )
-
-
-            st.divider()
-
-
-            # ==============================
-            # HIỂN THỊ DANH SÁCH
-            # ==============================
-
-            st.dataframe(
-                df,
-                use_container_width=True,
-                hide_index=True
-            )
-
-
-            st.divider()
-
-
-            # ==============================
-            # XUẤT EXCEL
-            # ==============================
-
-            excel_file = export_excel()
-
-
-            st.download_button(
-                label="📥 XUẤT FILE EXCEL",
-                data=excel_file,
-                file_name="danh_sach_khach_hang.xlsx",
-                mime=(
-                    "application/vnd.openxmlformats-officedocument."
-                    "spreadsheetml.sheet"
-                ),
-                use_container_width=True
-            )
+    st.info("💡 Chưa có dữ liệu khách hàng ưu tiên (HOT Lead) cần xử lý.")
+
+elif "Khách hàng" in menu_choice:
+    st.title("👥 Quản lý danh sách Khách hàng")
+    st.write("Chức năng tra cứu và phân loại khách hàng.")
+
+elif "Thêm khách hàng" in menu_choice:
+    st.title("➕ Thêm mới Khách hàng tiềm năng")
+    with st.form("add_lead_form"):
+        col_f1, col_f2 = st.columns(2)
+        with col_f1:
+            st.text_input("Họ và tên khách hàng")
+            st.text_input("Số điện thoại")
+            st.selectbox("Phân loại Lead", ["🔥 HOT Lead", "⚡ WARM Lead", "❄️ COLD Lead"])
+        with col_f2:
+            st.selectbox("Nhu cầu sản phẩm VCB", ["Thẻ tín dụng", "Vay tiêu dùng", "Gửi tiết kiệm", "Mở tài khoản số đẹp", "Khác"])
+            st.selectbox("Trạng thái Pipeline", ["Mới tiếp nhận", "Đã liên hệ", "Đang tư vấn", "Tiềm năng", "Đã chuyển đổi"])
+            st.text_area("Ghi chú thêm")
+        st.form_submit_button("Lưu khách hàng", type="primary")
+
+elif "Pipeline" in menu_choice:
+    st.title("🎯 Quản lý Tiến độ Pipeline")
+    st.write("Chức năng theo dõi hành trình chuyển đổi khách hàng.")
+
+elif "Phân tích" in menu_choice:
+    st.title("📊 Báo cáo & Phân tích")
+    st.write("Biểu đồ và chỉ số hiệu quả chuyển đổi Lead.")
+
+elif "Cần chăm sóc" in menu_choice:
+    st.title("📞 Danh sách Khách hàng Cần chăm sóc")
+    st.write("Lịch nhắc gọi lại và chăm sóc định kỳ.")
