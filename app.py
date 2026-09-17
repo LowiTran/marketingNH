@@ -130,14 +130,14 @@ st.markdown("""
 # 4. THANH DIỀU HƯỚNG BÊN TRÁI (SIDEBAR)
 # ==========================================
 with st.sidebar:
+    # Hiển thị file ảnh từ máy
+    st.image("VCB.jpg", use_container_width=True)
+    
     st.markdown("""
-        <div class="logo-container">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Vietcombank_logo.svg/1200px-Vietcombank_logo.svg.png" width="150">
-        </div>
         <div style="text-align: center; margin-bottom: 20px;">
             <h3 style="margin: 0; font-size: 18px; font-weight: bold; color: white;">VIETCOMBANK</h3>
             <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.9; font-weight: 600;">LEAD MANAGER</p>
-            <p style="margin: 0; font-size: 11px; opacity: 0.7;">Nhóm Lộn Xộn</p>
+            <p style="margin: 0; font-size: 11px; opacity: 0.7;">Nhóm NoLe KPI</p>
         </div>
         <hr style="border-color: rgba(255,255,255,0.2); margin-bottom: 20px;">
     """, unsafe_allow_html=True)
