@@ -4,7 +4,7 @@ from datetime import datetime
 
 # 1. Cấu hình trang Streamlit
 st.set_page_config(
-    page_title="VIETCOMBANK LEAD MANAGER - NHÓM LỘN XỘN",
+    page_title="VIETCOMBANK LEAD MANAGER - NHÓM NOLE KPI",
     page_icon="🏛️",
     layout="wide",
     initial_sidebar_state="expanded"
