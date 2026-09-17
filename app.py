@@ -1,209 +1,226 @@
 import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
+import datetime
 
 # Cấu hình trang
-st.set_page_config(
-    page_title="VCB Digibank - Ngân hàng số",
-    page_icon="🏦",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="Vietcombank - Trang chủ", page_icon="🛡️", layout="wide")
 
-# CSS Tùy chỉnh để giả lập giao diện VCB Digibank
-def local_css():
-    st.markdown("""
+# Tùy chỉnh CSS để giống màu sắc thương hiệu VCB (Xanh và Trắng)
+st.markdown("""
     <style>
-        /* Màu chủ đạo của VCB là xanh lá cây đậm: #005a3c và màu phụ là xanh nhạt */
-        :root {
-            --vcb-green: #005a3c;
-            --vcb-light-green: #67a935;
-        }
-        
-        /* Chỉnh màu chữ sidebar */
-        [data-testid="stSidebar"] {
-            background-color: #f8f9fa;
-        }
-        [data-testid="stSidebar"] * {
-            color: var(--vcb-green) !important;
-        }
-        
-        /* Tiêu đề chính */
-        h1, h2, h3 {
-            color: var(--vcb-green) !important;
-            font-weight: bold;
-        }
-        
-        /* Thẻ hiển thị số dư tài khoản */
-        .account-card {
-            background: linear-gradient(135deg, #005a3c, #67a935);
-            border-radius: 15px;
-            padding: 25px;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            margin-bottom: 25px;
-        }
-        .account-card p {
-            color: white !important;
-            margin: 0;
-            padding: 0;
-        }
-        .account-balance {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 10px 0 !important;
-            color: white !important;
-        }
-        
-        /* Nút thao tác nhanh ở trang chủ */
-        .stButton>button {
-            width: 100%;
-            background-color: white;
-            color: var(--vcb-green) !important;
-            border: 1.5px solid var(--vcb-green);
-            border-radius: 10px;
-            height: 70px;
-            font-weight: bold;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        .stButton>button:hover {
-            background-color: var(--vcb-green);
-            color: white !important;
-            border: 1.5px solid var(--vcb-green);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        /* Nút Primary (Lưu / Tiếp tục) */
-        button[data-testid="baseButton-primary"] {
-            background-color: var(--vcb-green) !important;
-            color: white !important;
-        }
-        
-        /* Ẩn footer mặc định của Streamlit */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
+    /* Ẩn menu mặc định của Streamlit */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Màu sắc thương hiệu */
+    .vcb-green-text {color: #008345 !important; font-weight: bold;}
+    .vcb-light-green-bg {background-color: #8cc63f !important; color: white !important; border-radius: 5px; padding: 8px 15px;}
+    
+    /* Định dạng thanh Top Nav */
+    .top-nav {font-size: 13px; color: #555; display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 15px;}
+    .top-nav a {text-decoration: none; color: #555; margin-right: 15px;}
+    .top-nav a:hover {color: #008345;}
+    
+    /* Định dạng Container chính */
+    .main-container {background-color: white; padding: 20px;}
+    
+    /* Căn giữa các nút ở menu dưới */
+    div.stButton > button {height: 80px; font-weight: bold; color: #008345; border-color: #e0e0e0; background-color: white;}
+    div.stButton > button:hover {border-color: #008345; color: #008345;}
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-local_css()
-
-# Biến dữ liệu giả lập
-USER_NAME = "NGUYỄN VĂN A"
-ACCOUNT_NUMBER = "1012345678"
-BALANCE = "125,450,000 VND"
-
-# ==========================================
-# GIAO DIỆN SIDEBAR (THANH ĐIỀU HƯỚNG TRÁI)
-# ==========================================
-st.sidebar.image(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Vietcombank_logo.svg/1200px-Vietcombank_logo.svg.png", 
-    width=220
-)
-st.sidebar.markdown("---")
-st.sidebar.markdown(f"**👤 Xin chào,**\n### **{USER_NAME}**")
-st.sidebar.markdown("---")
-
-menu = ["🏠 Trang chủ", "💸 Chuyển tiền", "💰 Gửi tiết kiệm", "🧾 Thanh toán hóa đơn", "💳 Dịch vụ thẻ", "⚙️ Cài đặt"]
-choice = st.sidebar.radio("DANH MỤC CHỨC NĂNG", menu)
-
-st.sidebar.markdown("---")
-st.sidebar.button("Đăng xuất", type="primary")
-
-# ==========================================
-# GIAO DIỆN MAIN CONTENT (NỘI DUNG CHÍNH)
-# ==========================================
-
-if choice == "🏠 Trang chủ":
-    st.title("VCB Digibank")
-    
-    # Khu vực thẻ tài khoản
-    st.markdown(f"""
-    <div class="account-card">
-        <p style="font-size: 16px;">Tài khoản thanh toán VND</p>
-        <p style="font-size: 22px; font-weight: bold; letter-spacing: 2px;">{ACCOUNT_NUMBER}</p>
-        <div class="account-balance">{BALANCE}</div>
-        <p style="font-size: 14px; opacity: 0.9;">Chi nhánh Thăng Long</p>
+# 1. TOP NAVIGATION BAR (Cá nhân, Tổ chức, Về Vietcombank...)
+st.markdown("""
+    <div class="top-nav">
+        <div>
+            <a href="#" style="color: #008345; font-weight: bold;">Cá nhân</a>
+            <a href="#">Tổ chức</a>
+            <a href="#">Khách hàng Ưu tiên</a>
+        </div>
+        <div>
+            <a href="#">Về Vietcombank</a>
+            <a href="#">Tin tức</a>
+            <a href="#">Nhà đầu tư</a>
+            <a href="#">Mạng lưới</a>
+            <a href="#">Tuyển dụng</a>
+            <span style="margin-right: 15px; font-weight: bold;">📞 1900 545413</span>
+            <span>🇻🇳</span>
+        </div>
     </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("### ⚡ Chức năng nổi bật")
-    
-    # Khu vực các nút bấm tiện ích nhanh
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.button("💸\nChuyển tiền VCB")
-    with col2:
-        st.button("⚡\nChuyển nhanh 24/7")
-    with col3:
-        st.button("📱\nNạp tiền điện thoại")
-    with col4:
-        st.button("🧾\nThanh toán hóa đơn")
+""", unsafe_allow_html=True)
+
+# 2. MAIN NAVIGATION BAR (Logo, Menu chính, Đăng nhập)
+nav_cols = st.columns([2, 1.5, 1.5, 1.5, 1.5, 2, 1.5])
+with nav_cols[0]:
+    st.markdown("<h3 class='vcb-green-text'>🛡️ Vietcombank</h3>", unsafe_allow_html=True)
+with nav_cols[1]:
+    st.markdown("<p style='margin-top: 10px;'>Sản phẩm & Dịch vụ ⌄</p>", unsafe_allow_html=True)
+with nav_cols[2]:
+    st.markdown("<p style='margin-top: 10px;'>Công cụ & Tiện ích ⌄</p>", unsafe_allow_html=True)
+with nav_cols[3]:
+    st.markdown("<p style='margin-top: 10px;'>Liên hệ & Hỗ trợ ⌄</p>", unsafe_allow_html=True)
+with nav_cols[4]:
+    st.markdown("<p style='margin-top: 10px;'>Giao dịch an toàn</p>", unsafe_allow_html=True)
+with nav_cols[5]:
+    st.markdown("<p style='margin-top: 10px; color: #004a8f; font-weight: bold;'>DIY Vietcombank x HAHA</p>", unsafe_allow_html=True)
+with nav_cols[6]:
+    if st.button("🚪 Đăng nhập", type="primary", use_container_width=True):
+        st.info("Chuyển hướng đến trang Đăng nhập VCB Digibank...")
+
+st.markdown("<hr style='margin: 0px 0px 40px 0px; opacity: 0.2;'>", unsafe_allow_html=True)
+
+# 3. HERO SECTION (Lời chào, Tìm kiếm, QR Code & Hình ảnh)
+hero_col1, hero_col2 = st.columns([1.2, 1])
+
+with hero_col1:
+    st.markdown("<br>", unsafe_allow_html=True)
+    # Tự động thay đổi lời chào theo giờ
+    current_hour = datetime.datetime.now().hour
+    if current_hour < 12:
+        greeting = "Chào buổi sáng ⛅"
+    elif current_hour < 18:
+        greeting = "Chào buổi chiều 🌤️"
+    else:
+        greeting = "Chào buổi tối 🌙"
         
-    st.markdown("---")
+    st.markdown(f"<h1 style='font-size: 3rem; color: #333;'>{greeting}</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 1.2rem; color: #555;'>Quý khách đang tìm kiếm gì hôm nay?</p>", unsafe_allow_html=True)
     
-    # Bảng lịch sử giao dịch gần đây
-    st.markdown("### 🕒 Lịch sử giao dịch gần đây")
-    
-    now = datetime.now()
-    transactions = pd.DataFrame({
-        "Thời gian": [
-            (now).strftime("%d/%m/%Y %H:%M"),
-            (now - timedelta(days=1)).strftime("%d/%m/%Y %H:%M"),
-            (now - timedelta(days=2)).strftime("%d/%m/%Y %H:%M"),
-            (now - timedelta(days=3)).strftime("%d/%m/%Y %H:%M"),
-            (now - timedelta(days=5)).strftime("%d/%m/%Y %H:%M")
-        ],
-        "Diễn giải": [
-            "Chuyển tiền đến NGUYEN VAN B",
-            "Thanh toán hóa đơn tiền điện",
-            "Nhận lương tháng",
-            "Phí duy trì dịch vụ VCB Digibank",
-            "Nạp tiền điện thoại Viettel"
-        ],
-        "Số tiền": [
-            "- 500,000 VND",
-            "- 1,250,000 VND",
-            "+ 25,000,000 VND",
-            "- 11,000 VND",
-            "- 100,000 VND"
-        ]
-    })
-    
-    st.dataframe(transactions, use_container_width=True, hide_index=True)
+    # Thanh tìm kiếm
+    search_query = st.text_input("", placeholder="🔍 Thẻ tín dụng, vay tiêu dùng...", label_visibility="collapsed")
+    if search_query:
+        st.success(f"Đang tìm kiếm thông tin cho: **{search_query}**")
 
-elif choice == "💸 Chuyển tiền":
-    st.title("Chuyển tiền")
-    st.info("Quý khách vui lòng chọn hình thức chuyển tiền, nhập thông tin người nhận và số tiền.")
+with hero_col2:
+    # Mô phỏng khu vực QR code và bộ sưu tập thẻ
+    st.markdown("""
+        <div style="background-color: #f1f8f4; padding: 20px; border-radius: 15px; text-align: center; border: 1px dashed #008345;">
+            <h4 style="color: #008345;">Quét để khám phá</h4>
+Dưới đây là mã nguồn Streamlit hoàn chỉnh mô phỏng lại bố cục và các chức năng chính của giao diện web Vietcombank trong hình. Tôi đã thiết kế lại với tông màu xanh lá (VCB) và trắng, loại bỏ hình nền phong cảnh phức tạp để giao diện gọn gàng, mang tính ứng dụng cao.
+
+Bạn chỉ cần lưu đoạn mã này vào một file (ví dụ: `app.py`) và chạy bằng lệnh `streamlit run app.py` trong terminal.
+
+```python
+import streamlit as st
+
+# 1. Cấu hình trang
+st.set_page_config(page_title="Vietcombank Clone", layout="wide", initial_sidebar_state="collapsed")
+
+# 2. CSS Tùy chỉnh (Giao diện xanh/trắng)
+st.markdown("""
+    <style>
+    /* Tùy chỉnh màu sắc chữ */
+    .vcb-green { color: #005C2B; font-weight: bold; }
+    .top-bar { font-size: 13px; color: #555; }
+    .nav-link { font-size: 16px; font-weight: bold; color: #005C2B; cursor: pointer; }
     
-    with st.form("transfer_form"):
-        st.selectbox("Hình thức chuyển:", ["Chuyển tiền trong Vietcombank", "Chuyển nhanh Napas 24/7 ngoài VCB"])
+    /* Giao diện khung Hero */
+    .bg-light-green { 
+        background-color: #E8F5E9; 
+        padding: 40px; 
+        border-radius: 15px; 
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    /* Tùy chỉnh thanh tìm kiếm */
+    div[data-testid="stTextInput"] input { 
+        border-radius: 30px; 
+        padding: 15px;
+    }
+    
+    /* Tùy chỉnh nút bấm Đăng nhập & Utilities */
+    div.stButton > button {
+        border-radius: 20px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        border-color: #005C2B;
+        color: #005C2B;
+    }
+    .login-btn div.stButton > button {
+        background-color: #8CC63F;
+        color: white;
+        border: none;
+    }
+    .login-btn div.stButton > button:hover {
+        background-color: #005C2B;
+        color: white;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 3. Top Bar (Thanh menu trên cùng)
+t1, t2, t3 = st.columns([4, 1, 4])
+with t1:
+    st.markdown("<span class='top-bar'><b>Cá nhân</b> &nbsp;&nbsp;|&nbsp;&nbsp; Tổ chức &nbsp;&nbsp;|&nbsp;&nbsp; Khách hàng Ưu tiên</span>", unsafe_allow_html=True)
+with t3:
+    st.markdown("<div style='text-align: right;'><span class='top-bar'>Về Vietcombank &nbsp;|&nbsp; Tin tức &nbsp;|&nbsp; Nhà đầu tư &nbsp;|&nbsp; Mạng lưới &nbsp;|&nbsp; Tuyển dụng &nbsp;|&nbsp; 📞 <b>1900 545413</b> &nbsp;|&nbsp; 🇻🇳</span></div>", unsafe_allow_html=True)
+
+st.divider()
+
+# 4. Main Navigation (Thanh điều hướng chính)
+n1, n2, n3, n4, n5, n6 = st.columns([1.5, 1.2, 1.2, 1.2, 1.2, 1])
+with n1:
+    st.markdown("<h3 class='vcb-green'>🛡️ Vietcombank</h3>", unsafe_allow_html=True)
+with n2:
+    st.markdown("<div class='nav-link'>Sản phẩm & Dịch vụ ⌄</div>", unsafe_allow_html=True)
+with n3:
+    st.markdown("<div class='nav-link'>Công cụ & Tiện ích ⌄</div>", unsafe_allow_html=True)
+with n4:
+    st.markdown("<div class='nav-link'>Liên hệ & Hỗ trợ ⌄</div>", unsafe_allow_html=True)
+with n5:
+    st.markdown("<div class='nav-link'>Giao dịch an toàn</div>", unsafe_allow_html=True)
+with n6:
+    st.markdown("<div class='login-btn'>", unsafe_allow_html=True)
+    st.button("➔ Đăng nhập", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# 5. Hero Section (Khu vực chào mừng, tìm kiếm và thẻ)
+with st.container():
+    st.markdown("<div class='bg-light-green'>", unsafe_allow_html=True)
+    h1, h2, h3 = st.columns([4, 2, 4])
+    
+    with h1:
+        st.header("Chào buổi chiều 🌤️")
+        st.write("Quý khách đang tìm kiếm gì hôm nay?")
+        # Thanh tìm kiếm
+        search = st.text_input("", placeholder="🔍 Thẻ tín dụng, vay tiêu dùng...")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            st.text_input("Ngân hàng thụ hưởng")
-            st.text_input("Số tài khoản người nhận")
-        with col2:
-            st.text_input("Tên người nhận (Hệ thống tự động tra cứu)", disabled=True, value="Vui lòng nhập STK...")
-            st.number_input("Số tiền (VND)", min_value=0, step=50000)
-            
-        st.text_input("Nội dung chuyển tiền", value=f"{USER_NAME} chuyen tien")
-        st.form_submit_button("Tiếp tục", type="primary")
+    with h2:
+        # Giả lập mã QR
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.image("[https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=vietcombank](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=vietcombank)", width=120)
+        st.write("↙️ Quét để khám phá")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    with h3:
+        # Phần giới thiệu bộ sưu tập thẻ (thay thế ảnh bằng Text và Icon)
+        st.markdown("<h3 class='vcb-green'>Vietcombank Visa HAHA Collection</h3>", unsafe_allow_html=True)
+        st.write("✏️ Khởi lo chi, chỉ lo chill 🥕")
+        st.info("💳 Hình ảnh minh họa các thẻ Visa (Xanh lá, Hồng, Xanh dương)")
+        
+    st.markdown("</div>", unsafe_allow_html=True)
 
-elif choice == "💰 Gửi tiết kiệm":
-    st.title("Tiền gửi tiết kiệm trực tuyến")
-    st.success("🌟 Lãi suất gửi góp trực tuyến hiện tại đang áp dụng lên đến 5.5%/năm.")
-    
-    st.metric(label="Tổng số dư tiết kiệm (VND)", value="50,000,000", delta="+2,500,000 VND so với tháng trước")
-    
-    st.markdown("---")
-    st.markdown("### Mở tài khoản tiết kiệm mới")
-    with st.form("saving_form"):
-        st.selectbox("Kỳ hạn gửi", ["1 tháng (Lãi suất 3.0%)", "3 tháng (Lãi suất 3.5%)", "6 tháng (Lãi suất 4.5%)", "12 tháng (Lãi suất 5.5%)"])
-        st.number_input("Số tiền gửi (VND)", min_value=1000000, step=1000000)
-        st.selectbox("Phương thức đáo hạn", ["Tự động quay vòng gốc và lãi", "Tự động quay vòng gốc, lãi chuyển vào TK thanh toán", "Đóng tài khoản, gốc và lãi chuyển vào TK thanh toán"])
-        st.form_submit_button("Mở sổ tiết kiệm", type="primary")
+# 6. Bottom Utilities Bar (Thanh tiện ích dưới cùng)
+st.markdown("<br>", unsafe_allow_html=True)
+b1, b2, b3, b4, b5 = st.columns(5)
+with b1:
+    st.button("⭐ Gợi ý sản phẩm", use_container_width=True)
+with b2:
+    st.button("📰 Tin nổi bật", use_container_width=True)
+with b3:
+    st.button("📝 Đăng ký trực tuyến", use_container_width=True)
+with b4:
+    st.button("🎁 VCB Loyalty", use_container_width=True)
+with b5:
+    st.button("🏷️ Ưu đãi", use_container_width=True)
 
-else:
-    st.title(choice)
-    st.warning("🚧 Chức năng này hiện đang được mô phỏng và nâng cấp trong phiên bản sắp tới.")
+# 7. Chatbot Icon (Nút nổi góc phải dưới)
+st.markdown("""
+    <div style='position: fixed; bottom: 30px; right: 30px; background-color: #8CC63F; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); cursor: pointer;'>
+        <h2 style='margin:0; padding:0;'>🤖</h2>
+    </div>
+""", unsafe_allow_html=True)
