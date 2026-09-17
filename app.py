@@ -181,9 +181,9 @@ if "Tổng quan" in menu_choice:
     
     # Tính toán các chỉ số thực tế từ dữ liệu
     total_leads = len(df_leads)
-    hot_leads = len(df_leads[df_leads['Phân loại'] == '🔥 HOT']) if total_leads > 0 else 0
-    warm_leads = len(df_leads[df_leads['Phân loại'] == '⚡ WARM']) if total_leads > 0 else 0
     cold_leads = len(df_leads[df_leads['Phân loại'] == '❄️ COLD']) if total_leads > 0 else 0
+    business_leads = len(df_leads[df_leads['Phân loại'] == '🤝 BUSINESS']) if total_leads > 0 else 0
+    prority_leads = len(df_leads[df_leads['Phân loại'] == '⚡ PRIORITYPRIORITY']) if total_leads > 0 else 0
     
     # 1. Tổng quan khách hàng
     st.markdown('<div class="section-header">📊 Tổng quan khách hàng</div>', unsafe_allow_html=True)
@@ -191,9 +191,9 @@ if "Tổng quan" in menu_choice:
     with c1:
         st.markdown(f'<div class="metric-card"><div class="metric-title">👥 Tổng khách hàng</div><div class="metric-value">{total_leads}</div></div>', unsafe_allow_html=True)
     with c2:
-        st.markdown(f'<div class="metric-card"><div class="metric-title">🔥 Khách HOT</div><div class="metric-value">{hot_leads}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-card"><div class="metric-title">❄️ Khách COLD</div><div class="metric-value">{hot_leads}</div></div>', unsafe_allow_html=True)
     with c3:
-        st.markdown(f'<div class="metric-card"><div class="metric-title">🤝 Khách DOANH NGHIỆP</div><div class="metric-value">{warm_leads}</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-card"><div class="metric-title">🤝 Khách BUSINESS</div><div class="metric-value">{warm_leads}</div></div>', unsafe_allow_html=True)
     with c4:
         st.markdown(f'<div class="metric-card"><div class="metric-title">⚡ Khách PRIORITY</div><div class="metric-value">{cold_leads}</div></div>', unsafe_allow_html=True)
 
@@ -214,13 +214,13 @@ if "Tổng quan" in menu_choice:
     st.markdown("<br>", unsafe_allow_html=True)
 
     # 3. Khách hàng ưu tiên xử lý (HOT Lead)
-    st.markdown('<div class="section-header">🔥 Khách hàng ưu tiên xử lý (HOT Lead)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">⚡ Khách hàng ưu tiên xử lý (PRIORITY Lead)</div>', unsafe_allow_html=True)
     
     if total_leads > 0 and hot_leads > 0:
-        hot_df = df_leads[df_leads['Phân loại'] == '🔥 HOT']
+        hot_df = df_leads[df_leads['Phân loại'] == '⚡ PRIORITY']
         st.dataframe(hot_df, use_container_width=True, hide_index=True)
     else:
-        st.info("💡 Chưa có dữ liệu khách hàng ưu tiên (HOT Lead) cần xử lý.")
+        st.info("💡 Chưa có dữ liệu khách hàng ưu tiên (PRIORITY Lead) cần xử lý.")
 
 # ------------------------------------------
 # MENU 2: KHÁCH HÀNG (Ảnh image_6118cf.png)
